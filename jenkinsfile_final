@@ -54,7 +54,7 @@ pipeline {
             sh 'docker login -u sivaklayanb -p ${dockerhub}'
 			
 			 }
-			   sh 'docker push devopshubg333/batch13:${BUILD_NUMBER}'
+			   sh 'docker push sivakalyanb/batch13:${BUILD_NUMBER}'
 			   
            
 				}
