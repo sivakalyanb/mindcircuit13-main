@@ -23,7 +23,7 @@ pipeline {
                 
                 sh ''' mvn sonar:sonar \\
                       -Dsonar.host.url=http://13.201.164.85:9000/ \\
-                      -Dsonar.login=squ_4540fd6ca2820a43d3f27ff2bdfec5a40031f7ea'''
+                      -Dsonar.login=squ_e42232b558149e8e9d42bfe9d3048a16baca19e9'''
             }
     	}
 		
