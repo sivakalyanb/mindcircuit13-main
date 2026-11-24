@@ -9,7 +9,7 @@ pipeline {
         IMAGE_NAME = 'devopshubg333/batch13'
         GITOPS_REPO = 'https://github.com/sivakalyanb/mindcircuit13-main.git'
         GITOPS_BRANCH = 'main'
-        SONAR_HOST_URL = 'http://44.210.116.12:9000'
+        SONAR_HOST_URL = 'http://13.201.164.85:9000'
     }
 
     stages {

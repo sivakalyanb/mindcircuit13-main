@@ -80,8 +80,8 @@ Create these Jenkins **Secret text** credentials:
 | --- | --- |
 | `dockerhub` | Docker Hub access token for `devopshubg333` |
 | `githubtoken` | GitHub token with permission to push commits to this repository's `main` branch |
-| `sonar-token` | SonarQube analysis token |
+| `SONAR_TOKEN` | SonarQube analysis token |
 
-The pipeline uses the configured SonarQube URL in `jenkinsfile_final`. Ensure that Jenkins can reach it. GitOps commits use a recognizable message so their webhook-triggered builds are skipped, avoiding a build/commit loop.
+The pipeline uses `http://13.201.164.85:9000` for SonarQube, matching the Maven project configuration. Ensure that the Jenkins agent can reach this endpoint. Webhook-triggered builds run every stage; a build caused by Jenkins' own GitOps commit does not create another GitOps commit, avoiding a loop.
 
 If the Docker Hub repository is private, create an image pull secret in the `mindcircuit` namespace and reference it from the Deployment before enabling Argo CD sync.
