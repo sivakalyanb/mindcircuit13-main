@@ -1,0 +1,98 @@
+pipeline {
+    agent any
+
+
+       tools {
+        maven 'maven3'
+    }
+
+    stages {
+      stage('checkout') {
+            steps {
+                echo 'Cloning GIT HUB Repo '
+				git branch: 'main', url: 'https://github.com/sivakalyanb/mindcircuit13-main.git'
+            }  
+        }
+		
+		
+		
+	 stage('sonar') {
+            steps {
+                echo 'scanning project'
+                sh 'ls -ltr'
+                
+                sh ''' mvn sonar:sonar \\
+                      -Dsonar.host.url=http://13.201.164.85:9000/ \\
+                      -Dsonar.login=squ_e42232b558149e8e9d42bfe9d3048a16baca19e9'''
+            }
+    	}
+		
+		
+		
+        stage('Build Artifact') {
+            steps {
+                echo 'Build Artifact'
+				sh 'mvn clean package'
+            }
+        }
+		
+		
+		
+        stage('Docker Image') {
+            steps {
+                echo 'Docker Image building'
+				sh 'docker build -t sivaklayanb/batch13:${BUILD_NUMBER} .'
+            }
+        }
+		
+		
+       stage('Push to Dockerhub') {
+            steps {
+			 script {
+			withCredentials([string(credentialsId: 'dockerhub', variable: 'dockerhub')]) 
+			{
+            sh 'docker login -u sivaklayanb -p ${dockerhub}'
+			
+			 }
+			   sh 'docker push sivakalyanb/batch13:${BUILD_NUMBER}'
+			   
+           
+				}
+				
+            }
+        }
+		
+		
+    stage('Update Deployment File') {
+		
+		 environment {
+            GIT_REPO_NAME = "mindcircuit13"
+            GIT_USER_NAME = "sivaklayanb"
+        }
+		
+            steps {
+                echo 'Update Deployment File'
+				withCredentials([string(credentialsId: 'githubtoken', variable: 'githubtoken')]) 
+				{
+                  sh '''
+                    git config user.email "kalyan84990@gmail.com"
+                    git config user.name "sivaklayanb"
+                    BUILD_NUMBER=${BUILD_NUMBER}
+                    sed -i "s/batch13:.*/batch13:${BUILD_NUMBER}/g" deploymentfiles/deployment.yml
+                    git add .
+                    
+                    git commit -m "Update deployment image to version ${BUILD_NUMBER}"
+
+                    git push https://${githubtoken}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
+                '''
+				  
+                 }
+				
+            }
+        }
+		
+		
+			
+    }
+
+}
